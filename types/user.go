@@ -1,12 +1,18 @@
 package types
 
 import (
+	"fmt"
+	"regexp"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
 )
 
 const (
 	bcryptCost = 12
+	minFirstNameLen = 2
+	minLastNameLen = 2
+	minPasswordLen = 7
 )
 
 type CreateUserParams struct {
@@ -16,6 +22,27 @@ type CreateUserParams struct {
 	Password  string
 }
 
+func (params CreateUserParams) Validate() error {
+	if len(params.FirstName) < minFirstNameLen{
+		return fmt.Errorf("FirstName lenght should be at least %d characters", minFirstNameLen)
+	}
+	if len(params.LastName) < minLastNameLen{
+		return fmt.Errorf("LastName lenght should be at least %d characters", minLastNameLen)
+	}
+	if len(params.Password) < minPasswordLen{
+		return fmt.Errorf("Password lenght should be at least %d characters", minPasswordLen)
+	}
+
+	if !isEmailValid(params.Email) {
+		return fmt.Errorf("Email is not valid!")
+	}
+	return nil
+}
+
+func isEmailValid(e string) bool {
+    emailRegex := regexp.MustCompile(`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`)
+    return emailRegex.MatchString(e)
+}
 // capital letter initially to make it public
 // same for the entities of the user
 // bson and json notation is space sensitivy
