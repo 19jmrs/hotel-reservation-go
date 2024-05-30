@@ -14,3 +14,7 @@
 - go as language
 - mongodb as database
 - go fiber for server creation
+
+```
+docker -d -p 27017:27017 --name mongodb mongo:latest
+```
